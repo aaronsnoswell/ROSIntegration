@@ -14,9 +14,9 @@ namespace ROSMessages{
 				_MessageType = "geometry_msgs/Point32";
 			}
 
-			double x;
-			double y;
-			double z;
+			float x;
+			float y;
+			float z;
 
 		};
 	}
