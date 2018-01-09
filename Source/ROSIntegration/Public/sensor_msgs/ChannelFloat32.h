@@ -14,7 +14,7 @@ namespace ROSMessages{
 			}
 
 			FString name;
-			TArray<float32> values;
+			TArray<float> values;
 
 		};
 	}
