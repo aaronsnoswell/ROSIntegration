@@ -11,18 +11,20 @@ namespace ROSMessages{
 				_MessageType = "sensor_msgs/PointField";
 			}
 
-			static const uint8 INT8=1;
-			static const uint8 UINT8=1;
-			static const uint8 INT16=1;
-			static const uint8 UINT16=1;
-			static const uint8 INT32=1;
-			static const uint8 UINT32=1;
-			static const uint8 FLOAT32=1;
-			static const uint8 FLOAT64=1;
+			static enum class EDataType : uint8 {
+				INT8 = 1,
+				UINT8 = 2,
+				INT16 = 3,
+				UINT16 = 4,
+				INT32 = 5,
+				UINT32 = 6,
+				FLOAT32 = 7,
+				FLOAT64 = 8
+			};
 
-			string name;
+			FString name;
 			uint32 offset;
-			uint8 datatype;
+			EDataType datatype;
 			uint32 count;
 		};
 
