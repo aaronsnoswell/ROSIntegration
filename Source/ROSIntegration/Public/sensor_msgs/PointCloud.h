@@ -22,8 +22,8 @@ namespace ROSMessages{
 			uint32 seq;
 			uint32 step;
 			FString frame_id;
-			TArray<RosMessages::geometry_msgs::Point32> points;
-			TArray<RosMessages::sensor_msgs::ChannelFloat32> channels;
+			TArray<ROSMessages::geometry_msgs::Point32> points;
+			TArray<ROSMessages::sensor_msgs::ChannelFloat32> channels;
 		};
 	}
 }
