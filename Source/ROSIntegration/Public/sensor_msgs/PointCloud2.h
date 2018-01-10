@@ -20,7 +20,7 @@ namespace ROSMessages{
 			ROSMessages::std_msgs::Header header;
 			uint32 height;
 			uint32 width;
-			TArray<RosMessages::sensor_msgs::PointField> fields;
+			TArray<ROSMessages::sensor_msgs::PointField> fields;
 			bool is_bigendian;
 			uint32 point_step;
 			uint32 row_step;
