@@ -8,6 +8,7 @@
 #include "rosbridge2cpp/messages/rosbridge_publish_msg.h"
 #include <cstring>
 #include "bson.h"
+#include "Public/std_msgs/Header.h"
 #include "BaseMessageConverter.generated.h"
 
 UCLASS()
@@ -55,6 +56,18 @@ public:
 	}
 
 protected:
+
+	// Helper function to append a std_msgs/Header to a bson_t
+	static void _bson_append_header(bson_t *b, ROSMessages::std_msgs::Header header)
+	{
+		bson_t *hdr = BCON_NEW(
+			"seq", BCON_INT32(header.seq),
+			"stamp", "{",
+			"secs", BCON_INT32(header.time._Sec),
+			"nsecs", BCON_INT32(header.time._NSec)
+		);
+		BSON_APPEND_DOCUMENT(b, "header", hdr);
+	}
 
 	// Helper function to append a TArray<float> to a bson_t
 	static void _bson_append_float_tarray(bson_t *b, const char *key, TArray<float> tarray)
