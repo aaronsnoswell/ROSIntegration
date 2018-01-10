@@ -30,7 +30,7 @@ public:
 	}
 
 
-	// Helper function to append a TArray<ROSMessages::sensor_msgs::PointField> to a bson_t
+	// Helper function to append a TArray<ROSMessages::sensor_msgs::PointField> to an initialized bson_t
 	static void _bson_append_pointfield_tarray(bson_t *b, const char *key, TArray<ROSMessages::sensor_msgs::PointField> tarray)
 	{
 		bson_t arr;
