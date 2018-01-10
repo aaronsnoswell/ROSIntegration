@@ -1,7 +1,5 @@
 #include "Conversion/Messages/sensor_msgs/SensorMsgsChannelFloat32Converter.h"
 
-#include "sensor_msgs/ChannelFloat32.h"
-
 
 USensorMsgsChannelFloat32Converter::USensorMsgsChannelFloat32Converter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -20,8 +18,7 @@ bool USensorMsgsChannelFloat32Converter::ConvertOutgoingMessage(TSharedPtr<FROSB
 	assert(ChannelFloat32->values.Num() >= 1);
 
 	bson_init(*message);
-	BSON_APPEND_UTF8(*message, "name", TCHAR_TO_UTF8(*ChannelFloat32->name));
-	_bson_append_float_tarray(*message, "values", ChannelFloat32->values);
+	_bson_append_channelfloat32(*message, ChannelFloat32.Get());
 
 	return true;
 
