@@ -1,4 +1,6 @@
 #include "Conversion/Messages/sensor_msgs/SensorMsgsPointCloudConverter.h"
+
+#include "Conversion/Messages/std_msgs/StdMsgsHeaderConverter.h"
 #include "Conversion/Messages/geometry_msgs/GeometryMsgsPoint32Converter.h"
 #include "Conversion/Messages/sensor_msgs/SensorMsgsChannelFloat32Converter.h"
 
@@ -24,7 +26,7 @@ bool USensorMsgsPointCloudConverter::ConvertOutgoingMessage(TSharedPtr<FROSBaseM
 
 	bson_init(*message);
 
-	_bson_append_header(*message, PointCloud->header);
+	UStdMsgsHeaderConverter::_bson_append_child_header(*message, "header", &(PointCloud->header));
 	BSON_APPEND_INT32(*message, "seq", PointCloud->seq);
 	BSON_APPEND_INT32(*message, "step", PointCloud->step);
 	BSON_APPEND_UTF8(*message, "frame_id", TCHAR_TO_UTF8(*PointCloud->frame_id));

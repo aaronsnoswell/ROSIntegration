@@ -1,7 +1,9 @@
 #include "Conversion/Messages/sensor_msgs/SensorMsgsPointCloud2Converter.h"
 
-#include "sensor_msgs/PointCloud2.h"
+#include "Conversion/Messages/std_msgs/StdMsgsHeaderConverter.h"
 #include "Conversion/Messages/sensor_msgs/SensorMsgsPointFieldConverter.h"
+
+#include "sensor_msgs/PointCloud2.h"
 
 
 USensorMsgsPointCloud2Converter::USensorMsgsPointCloud2Converter(const FObjectInitializer& ObjectInitializer)
@@ -23,7 +25,7 @@ bool USensorMsgsPointCloud2Converter::ConvertOutgoingMessage(TSharedPtr<FROSBase
 
 	bson_init(*message);
 
-	_bson_append_header(*message, PointCloud2->header);
+	UStdMsgsHeaderConverter::_bson_append_child_header(*message, "header", &(PointCloud2->header));
 	BSON_APPEND_INT32(*message, "height", PointCloud2->height);
 	BSON_APPEND_INT32(*message, "width", PointCloud2->width);
 	USensorMsgsPointFieldConverter::_bson_append_pointfield_tarray(*message, "fields", PointCloud2->fields);
