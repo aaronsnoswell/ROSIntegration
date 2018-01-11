@@ -8,6 +8,7 @@ USensorMsgsChannelFloat32Converter::USensorMsgsChannelFloat32Converter(const FOb
 }
 
 bool USensorMsgsChannelFloat32Converter::ConvertIncomingMessage(const ROSBridgePublishMsg* message, TSharedPtr<FROSBaseMsg> &BaseMsg) {
+	UE_LOG(LogTemp, Warning, TEXT("ROSIntegration: ChannelFloat32 receiving not implemented yet"));
 	return false;
 }
 

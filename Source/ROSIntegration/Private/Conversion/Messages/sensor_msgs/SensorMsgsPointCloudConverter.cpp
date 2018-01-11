@@ -14,6 +14,7 @@ USensorMsgsPointCloudConverter::USensorMsgsPointCloudConverter(const FObjectInit
 }
 
 bool USensorMsgsPointCloudConverter::ConvertIncomingMessage(const ROSBridgePublishMsg* message, TSharedPtr<FROSBaseMsg> &BaseMsg) {
+	UE_LOG(LogTemp, Warning, TEXT("ROSIntegration: PointCloud receiving not implemented yet"));
 	return false;
 }
 
