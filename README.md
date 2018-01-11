@@ -108,6 +108,8 @@ TODO
 
 ### Supported Message Types
 
+Note: The check marks in the *UE4 to ROS* column below indicate that the object can be parsed into a class (see [`Source/ROSIntegration/Public/xxxx_msgs/*.h`](tree/master/Source/ROSIntegration/Public)) that can be read from UE4 C++ code. This doesn't necessarily mean a sensible way to generate that data (e.g. PointCloud2) from the UE4 game world has been implemented. For this the [ROSIntegrationVision plugin](https://github.com/code-iai/ROSIntegrationVision) might be of interest.
+
 Topic Message Type                 | ROS to UE4 | UE4 to ROS
 ---------------------------------- | ---------- | ----------
 std_msgs/Header                    | ✓          | ✓
@@ -120,6 +122,10 @@ geometry_msgs/Vector3              | ✘          | ✓
 sensor_msgs/CameraInfo             | ✘          | ✓
 sensor_msgs/Image                  | ✘          | ✓
 sensor_msgs/RegionOfInterest       | ✘          | ✘
+sensor_msgs/PointCloud2            | ✘          | ✓
+sensor_msgs/PointCloud             | ✘          | ✓
+sensor_msgs/ChannelFloat32         | ✘          | ✓
+sensor_msgs/PointField             | ✘          | ✓
 
 
 Service Message Type               | ROS to UE4 | UE4 to ROS
