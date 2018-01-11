@@ -18,15 +18,6 @@ bool USensorMsgsPointFieldConverter::ConvertOutgoingMessage(TSharedPtr<FROSBaseM
 
 	bson_init(*message);
 	_bson_append_pointfield(*message, PointField.Get());
-
-	/*
-	*message = BCON_NEW(
-		"name", BCON_UTF8(TCHAR_TO_UTF8(*PointField->name)),
-		"offset", BCON_INT32(PointField->offset),
-		"datatype", BCON_INT32((uint8)(PointField->datatype)),
-		"count", BCON_INT32(PointField->count)
-	);
-	*/
 	
 	return true;
 
