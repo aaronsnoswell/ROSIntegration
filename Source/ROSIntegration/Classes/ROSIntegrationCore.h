@@ -15,7 +15,7 @@ class ROSINTEGRATION_API UROSIntegrationCore: public UObject
 	GENERATED_UCLASS_BODY()
 
 public:
-	void Init(FString ROSBridgeHost, int32 ROSBridgePort);
+	void Init(FString ROSBridgeHost, int32 ROSBridgePort, bool bson_only);
 
 	// You must call Init() before using this method to set upthe Implmentation correctly
 	void SetWorld(UWorld* World);
@@ -36,10 +36,6 @@ private:
 
 	friend class UTopic;
 	friend class UService;
-
-
-	
-	bool bson_test_mode = true;
 	
 };
 

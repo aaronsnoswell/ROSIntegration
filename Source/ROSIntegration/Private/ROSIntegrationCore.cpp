@@ -21,7 +21,7 @@
 class UROSIntegrationCore::Impl {
 	// hidden implementation details
 public:
-	bool _bson_test_mode;
+	bool _bson_only;
 
 	TCPConnection _Connection;
 	rosbridge2cpp::ROSBridge _Ros{ _Connection };
@@ -252,10 +252,10 @@ public:
 		_World = World;
 	}
 
-	void Init(FString ROSBridgeHost, int32 ROSBridgePort, bool bson_test_mode) {
-		_bson_test_mode = bson_test_mode;
+	void Init(FString ROSBridgeHost, int32 ROSBridgePort, bool bson_only) {
+		_bson_only = bson_only;
 
-		if (bson_test_mode) {
+		if (_bson_only) {
 			// OUT_INFO(TEXT("BSON mode enabled"));
 			_Ros.enable_bson_mode();
 		}
@@ -297,10 +297,10 @@ UROSIntegrationCore::UROSIntegrationCore(const FObjectInitializer& ObjectInitial
 {
 }
 
-void UROSIntegrationCore::Init(FString ROSBridgeHost, int32 ROSBridgePort) {
+void UROSIntegrationCore::Init(FString ROSBridgeHost, int32 ROSBridgePort, bool bson_only = true) {
 	UE_LOG(LogTemp, Verbose, TEXT("CALLING INIT ON RIC IMPL()!"));
 	_Implementation = new UROSIntegrationCore::Impl;
-	_Implementation->Init(ROSBridgeHost, ROSBridgePort, bson_test_mode);
+	_Implementation->Init(ROSBridgeHost, ROSBridgePort, bson_only);
 }
 
 void UROSIntegrationCore::SetWorld(UWorld* World) {

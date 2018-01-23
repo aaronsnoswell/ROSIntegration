@@ -25,4 +25,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ROS")
 	int32 ROSBridgeServerPort = 9090;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ROS")
+	bool UseBSON = true;
 };
