@@ -33,7 +33,7 @@ bool TCPConnection::Init(std::string ip_addr, int port) {
   // TODO Wait for successful connection? How? ConnectionState always returns CLOSED. Even after waiting a bit.
 
   // // Setting up the receiver thread
-  std::cout << "Setting up receiver thread..." << std::endl;
+  UE_LOG(LogTemp, Log, TEXT("Setting up receiver thread..."));
   receiverThread = std::move(std::thread([=]() {ReceiverThreadFunction(); return 1; }));
   receiverThreadSetUp = true;
 
@@ -48,7 +48,7 @@ bool TCPConnection::SendMessage(std::string data){
 
   // TODO check errors on send
   _sock->Send(byte_msg, data.length(), bytes_sent);
-  std::cout << "Send data: " << data << std::endl;
+  //UE_LOG(LogTemp, Log, TEXT("Send data: %s"), data);
 
   return true;
 }
@@ -72,9 +72,9 @@ bool TCPConnection::SendMessage(const uint8_t *data, unsigned int length){
     bool SendResult = _sock->Send(data, total_bytes_to_send, bytes_sent);
 
     if(bytes_sent == -1){
-        std::cout << "#";
+		UE_LOG(LogTemp, Log, TEXT("#"));
         if(!GraceTimeActive){
-            std::cerr << "Send returned -1 bytes. Grace Time started" << std::endl; 
+			UE_LOG(LogTemp, Error, TEXT("Send returned -1 bytes. Grace Time started"));
             GraceTimeStart = FDateTime::UtcNow();
             GraceTimeActive = true;
         }else{
@@ -82,7 +82,7 @@ bool TCPConnection::SendMessage(const uint8_t *data, unsigned int length){
             uint8 ElapsedSeconds = FDateTime::UtcNow().ToUnixTimestamp() - GraceTimeStart.ToUnixTimestamp();
             if(ElapsedSeconds >= 4){
                 // Cancel this send process
-                std::cerr << "Grace Time passed for sending packet. Discarding it." << std::endl; 
+				UE_LOG(LogTemp, Error, TEXT("Grace Time passed for sending packet. Discarding it."));
                 return false;
             }
         }
@@ -93,12 +93,12 @@ bool TCPConnection::SendMessage(const uint8_t *data, unsigned int length){
     }else{
         GraceTimeActive = false;
     }
-    
-    std::cout << "Send " << bytes_sent << " bytes from (" << total_bytes_to_send << "/" << length <<") Bytes ";
+
+	UE_LOG(LogTemp, Log, TEXT("Send %d bytes from (%d / %d) Bytes "), bytes_sent, total_bytes_to_send, length);
     if(SendResult){
-        std::cout << " T ";
+		UE_LOG(LogTemp, Log, TEXT("T"));
     }else{
-        std::cout << " F ";        
+		UE_LOG(LogTemp, Log, TEXT("F"));
     }
     
     total_bytes_to_send -= bytes_sent;
@@ -108,7 +108,7 @@ bool TCPConnection::SendMessage(const uint8_t *data, unsigned int length){
   // for (int i = 0; i < bytes_sent; i++) {
   //   std::cout << "0x" << std::setw(2) << std::setfill('0') << std::hex << (int)( data[i] );
   // }
-  std::cout << std::dec << "<SendDataEnd:" << checksum << ">" << std::endl;
+  UE_LOG(LogTemp, Log, TEXT("<SendDataEnd:%d>"), checksum);
   return true;
 }
 
@@ -127,8 +127,7 @@ uint16_t TCPConnection::Fletcher16( const uint8_t *data, int count ){
 }
 
 int TCPConnection::ReceiverThreadFunction(){
-
-  std::cout<<"Receiving\n";
+	UE_LOG(LogTemp, Log, TEXT("Receiving"));
   // uint32_t buf_size=1000000; // 1 MB
   // char recv_buffer[buf_size];
   // char* recv_buffer = new char[buf_size];
@@ -162,7 +161,7 @@ int TCPConnection::ReceiverThreadFunction(){
     //
 
     if(_sock->GetConnectionState()!=ESocketConnectionState::SCS_Connected){
-      std::cout << "Error on connection" << std::endl;
+	  UE_LOG(LogTemp, Error, TEXT("Error on connection"));
       ReportError(rosbridge2cpp::TransportError::R2C_SOCKET_ERROR);
       return 2; // error while receiving from socket
     }else{
@@ -199,12 +198,10 @@ int TCPConnection::ReceiverThreadFunction(){
       // binary_data.Empty();
       if(_sock->HasPendingData(count) && count > 0){
         TArray<uint8> binary_temp;
-        std::cout << "d" << std::dec;
-        std::cout << count;
-        std::cout.flush();
+		UE_LOG(LogTemp, Log, TEXT("d%d"), count);
 
         if(bson_state_read_length){
-          std::cout << "Reading length..." << std::endl;
+		  UE_LOG(LogTemp, Log, TEXT("Reading length..."));
           binary_buffer.Empty();
           binary_temp.SetNumUninitialized(4);
           if( _sock->Recv(binary_temp.GetData(), 4, bytes_read) ){
@@ -217,19 +214,19 @@ int TCPConnection::ReceiverThreadFunction(){
                   binary_temp.GetData()[1] << 8  |
                   binary_temp.GetData()[0]
                   );
-              std::cout << std::dec << "Total message length is: " << bson_msg_length << std::endl;
+			  UE_LOG(LogTemp, Log, TEXT("Total message length is: %d"), bson_msg_length);
               binary_buffer += binary_temp;
               // Indicate the message retrieval mode
               bson_state_read_length = false;
             }else{
-              std::cerr << "bytes_read is not 4 in bson_state_read_length==true. It's: " << bytes_read << std::endl;
+			  UE_LOG(LogTemp, Error, TEXT("bytes_read is not 4 in bson_state_read_length==true. It's: %d"), bytes_read);
             }
 
           }else{
-            std::cerr << "Failed to recv() even though data is pending. Count vs. bytes_read:" << count << "," << bytes_read << std::endl;
+			  UE_LOG(LogTemp, Error, TEXT("Failed to recv() even though data is pending. Count vs. bytes_read: %d, %d"), count, bytes_read);
           }
         }else{
-          std::cout << "Message read mode" << std::endl;
+		  UE_LOG(LogTemp, Log, TEXT("Message read mode"));
           // Message retreival mode
           //     Recv message_length bytes
           //     append_data_to_buf
@@ -240,7 +237,7 @@ int TCPConnection::ReceiverThreadFunction(){
           binary_temp.SetNumUninitialized(bson_msg_length - 4);
           if( _sock->Recv(binary_temp.GetData(), bson_msg_length - 4, bytes_read) ){
             if(bytes_read > bson_msg_length -4){
-              std::cerr << "Read more than bson length -4 !" << std::endl;
+			  UE_LOG(LogTemp, Error, TEXT("Read more than bson length -4 !"));
             }
 
             binary_buffer += binary_temp;
@@ -250,12 +247,12 @@ int TCPConnection::ReceiverThreadFunction(){
               bson_state_read_length = true;
               // Full received message!
               for (int i = 0; i < binary_buffer.Num(); i++) {
-                std::cout << "0x" << std::setw(2) << std::setfill('0') << std::hex << (int)( binary_buffer.GetData()[i] );
+                //std::cout << "0x" << std::setw(2) << std::setfill('0') << std::hex << (int)( binary_buffer.GetData()[i] );
               }
               std::cout << std::dec;
               bson_t b;
               if(!bson_init_static (&b, binary_buffer.GetData(), msg_size_in_buffer)){
-                std::cout << "Error on BSON parse - Ignoring message" << std::endl;
+				UE_LOG(LogTemp, Error, TEXT("Error on BSON parse - Ignoring message"));
                 continue;
               }
               if(incoming_message_callback_bson_){
@@ -264,10 +261,10 @@ int TCPConnection::ReceiverThreadFunction(){
 
               binary_buffer.Empty();
             }else{
-              std::cout << "Binary buffer num is:" << binary_buffer.Num() << std::endl;
+			  UE_LOG(LogTemp, Log, TEXT("Binary buffer num is: %d"), binary_buffer.Num());
             }
           }else{
-            std::cerr << "Failed to recv() in message retreival mode even though data is pending. Count vs. bytes_read:" << count << "," << bytes_read << std::endl;
+            UE_LOG(LogTemp, Error, TEXT("Failed to recv() in message retreival mode even though data is pending. Count vs. bytes_read: %d, %d"), count, bytes_read);
           }
         }
       }
@@ -276,8 +273,7 @@ int TCPConnection::ReceiverThreadFunction(){
       }
       // std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }else{
-      std::cout << ";";
-      std::cout.flush();
+	  UE_LOG(LogTemp, Log, TEXT(";"));
       while(_sock->HasPendingData(count) && count > 0){
         FArrayReader data;
         data.SetNumUninitialized(count);
@@ -305,7 +301,7 @@ int TCPConnection::ReceiverThreadFunction(){
       }
 
 
-      std::cout << "[TCPConnection] Received message(" << received_data.length() << "): " << received_data << std::endl;
+	  UE_LOG(LogTemp, Log, TEXT("[TCPConnection] Received message(%d)"), received_data.length());
       // TODO catch parse error properly
       // auto j = json::parse(received_data);
       json j;
@@ -351,7 +347,7 @@ void TCPConnection::SetTransportMode(rosbridge2cpp::ITransportLayer::TransportMo
       bson_only_mode_ = true;
       break;
     default:
-      std::cerr << "Given TransportMode Not implemented " << std::endl;
+	  UE_LOG(LogTemp, Error, TEXT("Given TransportMode Not implemented"));
   }
 
 }
