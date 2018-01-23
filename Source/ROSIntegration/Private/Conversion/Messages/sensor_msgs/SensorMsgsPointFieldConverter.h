@@ -23,10 +23,10 @@ public:
 	// Helper function to append a ROSMessages::sensor_msgs::PointField to an initialized bson_t
 	static void _bson_append_pointfield(bson_t *b, ROSMessages::sensor_msgs::PointField *pf)
 	{
-		BSON_APPEND_UTF8(b, "name", TCHAR_TO_UTF8(*pf->name));
-		BSON_APPEND_INT32(b, "offset", pf->offset);
-		BSON_APPEND_INT32(b, "datatype", (uint8)(pf->datatype));
-		BSON_APPEND_INT32(b, "count", pf->count);
+		BSON_APPEND_UTF8(b, "name", TCHAR_TO_UTF8(*pf->_name));
+		BSON_APPEND_INT32(b, "offset", pf->_offset);
+		BSON_APPEND_INT32(b, "datatype", (uint8)(pf->_datatype));
+		BSON_APPEND_INT32(b, "count", pf->_count);
 	}
 
 

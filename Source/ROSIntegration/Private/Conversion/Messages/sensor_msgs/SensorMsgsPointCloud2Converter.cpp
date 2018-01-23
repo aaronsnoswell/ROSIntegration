@@ -13,8 +13,26 @@ USensorMsgsPointCloud2Converter::USensorMsgsPointCloud2Converter(const FObjectIn
 }
 
 bool USensorMsgsPointCloud2Converter::ConvertIncomingMessage(const ROSBridgePublishMsg* message, TSharedPtr<FROSBaseMsg> &BaseMsg) {
-	UE_LOG(LogTemp, Warning, TEXT("ROSIntegration: PointCloud2 receiving not implemented yet"));
-	return false;
+	bool KeyFound = false;
+
+	FString name = GetFStringFromBSON(TEXT("msg.name"), message->full_msg_bson_, KeyFound);
+	if (!KeyFound) return false;
+
+	int32 offset = GetInt32FromBSON(TEXT("msg.offset"), message->full_msg_bson_, KeyFound);
+	if (!KeyFound) return false;
+
+	int32 _datatype = GetInt32FromBSON(TEXT("msg.datatype"), message->full_msg_bson_, KeyFound);
+	if (!KeyFound) return false;
+	ROSMessages::sensor_msgs::PointField::EDataType datatype = (ROSMessages::sensor_msgs::PointField::EDataType)_datatype;
+
+	int32 count = GetInt32FromBSON(TEXT("msg.count"), message->full_msg_bson_, KeyFound);
+	if (!KeyFound) return false;
+
+	BaseMsg = TSharedPtr<FROSBaseMsg>(new ROSMessages::sensor_msgs::PointField(name, offset, datatype, count));
+	return true;
+
+	//UE_LOG(LogTemp, Warning, TEXT("ROSIntegration: PointCloud2 receiving not implemented yet"));
+	//return false;
 }
 
 bool USensorMsgsPointCloud2Converter::ConvertOutgoingMessage(TSharedPtr<FROSBaseMsg> BaseMsg, bson_t** message) {

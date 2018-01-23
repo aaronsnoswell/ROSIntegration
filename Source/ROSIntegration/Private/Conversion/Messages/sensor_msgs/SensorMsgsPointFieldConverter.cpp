@@ -1,5 +1,6 @@
 #include "Conversion/Messages/sensor_msgs/SensorMsgsPointFieldConverter.h"
 
+#include "PointField.h"
 
 
 USensorMsgsPointFieldConverter::USensorMsgsPointFieldConverter(const FObjectInitializer& ObjectInitializer)
@@ -9,8 +10,23 @@ USensorMsgsPointFieldConverter::USensorMsgsPointFieldConverter(const FObjectInit
 }
 
 bool USensorMsgsPointFieldConverter::ConvertIncomingMessage(const ROSBridgePublishMsg* message, TSharedPtr<FROSBaseMsg> &BaseMsg) {
-	UE_LOG(LogTemp, Warning, TEXT("ROSIntegration: PointField receiving not implemented yet"));
-	return false;
+	bool KeyFound = false;
+
+	FString name = GetFStringFromBSON(TEXT("msg.name"), message->full_msg_bson_, KeyFound);
+	if (!KeyFound) return false;
+
+	int32 offset = GetInt32FromBSON(TEXT("msg.offset"), message->full_msg_bson_, KeyFound);
+	if (!KeyFound) return false;
+
+	int32 _datatype = GetInt32FromBSON(TEXT("msg.datatype"), message->full_msg_bson_, KeyFound);
+	if (!KeyFound) return false;
+	ROSMessages::sensor_msgs::PointField::EDataType datatype = (ROSMessages::sensor_msgs::PointField::EDataType)_datatype;
+
+	int32 count = GetInt32FromBSON(TEXT("msg.count"), message->full_msg_bson_, KeyFound);
+	if (!KeyFound) return false;
+
+	BaseMsg = TSharedPtr<FROSBaseMsg>(new ROSMessages::sensor_msgs::PointField(name, offset, datatype, count));
+	return true;
 }
 
 bool USensorMsgsPointFieldConverter::ConvertOutgoingMessage(TSharedPtr<FROSBaseMsg> BaseMsg, bson_t** message) {

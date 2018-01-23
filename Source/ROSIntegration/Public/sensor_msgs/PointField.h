@@ -7,9 +7,6 @@ namespace ROSMessages{
 	namespace sensor_msgs {
 		class PointField: public FROSBaseMsg {
 		public:
-			PointField() {
-				_MessageType = "sensor_msgs/PointField";
-			}
 
 			static enum class EDataType : uint8 {
 				INT8 = 1,
@@ -22,10 +19,20 @@ namespace ROSMessages{
 				FLOAT64 = 8
 			};
 
-			FString name;
-			uint32 offset;
-			EDataType datatype;
-			uint32 count;
+			PointField() {
+				_MessageType = "sensor_msgs/PointField";
+			}
+
+			PointField(FString name, uint32 offset, EDataType datatype, uint32 count) 
+				: _name(name), _offset(offset), _datatype(datatype), _count(count)
+			{
+				_MessageType = "sensor_msgs/PointField";
+			}
+
+			FString _name;
+			uint32 _offset;
+			EDataType _datatype;
+			uint32 _count;
 		};
 
 
